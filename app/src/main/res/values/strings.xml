@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Movies</string>
+    <string name="settingsMenu_name">Settings</string>
+    <string name="popular">Most popular movies</string>
+    <string name="top_rated">Top rated movies</string>
+    <string name="favourites">Favourites</string>
+    <string name="connectivity">Check Network Connectivity</string>
+    <string name="trailer">Trailer</string>
+    <string name="trailers">Trailers</string>
+    <string name="reviews">Reviews</string>
+    <string name="btnAdd">Favourites</string>
+    <string name="btnRemove">Favourites</string>
+
+    <string name="no_network">Can not load Data \n Check your Network Connectivity</string>
+    <string name="retry">Retry</string>
+</resources>
