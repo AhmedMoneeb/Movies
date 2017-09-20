@@ -18,14 +18,14 @@ Most of us can relate to kicking back on the couch and enjoying a movie with fri
 * Allow users to mark a movie as a favorite in the details view.
 * App uses content provider to store names, ids and the rest of the information needed to display their favorites collection while offline.
 ### Screenshots
-![ ](screenshots/1.png?raw=true )
-![ ](screenshots/2.png?raw=true )
-![ ](screenshots/3.png?raw=true )
-![ ](screenshots/4.png?raw=true )
-![ ](screenshots/5.png?raw=true )
-![ ](screenshots/6.png?raw=true )
-![ ](screenshots/7.png?raw=true )
-![ ](screenshots/8.png?raw=true )
+ ![ ](screenshots/1.png?raw=true )
+ ![ ](screenshots/2.png?raw=true )
+ ![ ](screenshots/3.png?raw=true )
+ ![ ](screenshots/4.png?raw=true )
+ ![ ](screenshots/5.png?raw=true )
+ ![ ](screenshots/6.png?raw=true )
+ ![ ](screenshots/7.png?raw=true )
+ ![ ](screenshots/8.png?raw=true )
 
 ### Building Instructions
 The app uses themoviedb.org API to fetch movies data.
