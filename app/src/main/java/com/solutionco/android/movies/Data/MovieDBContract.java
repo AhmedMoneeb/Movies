@@ -11,14 +11,15 @@ public class MovieDBContract {
 
     public static final String AUTHORITY = "com.solutionco.android.movies";
 
-    public static final Uri BASE_URI = Uri.parse("content://"+AUTHORITY);
+    public static final Uri BASE_URI = Uri.parse("content://" + AUTHORITY);
 
     public static final String MOVIE_PATH = "movie";
 
 
-    private MovieDBContract(){
+    private MovieDBContract() {
 
     }
+
     public static class MovieEntry implements BaseColumns {
 
         public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(MOVIE_PATH).build();

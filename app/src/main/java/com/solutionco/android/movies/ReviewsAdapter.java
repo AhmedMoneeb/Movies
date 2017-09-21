@@ -16,11 +16,11 @@ import java.util.ArrayList;
  * Created by Ahmed on 4/10/2017.
  */
 
-public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewViewHolder>{
-    ArrayList<Review> reviews ;
+public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewViewHolder> {
+    ArrayList<Review> reviews;
     Context context;
 
-    public ReviewsAdapter(Context con , ArrayList<Review>t ) {
+    public ReviewsAdapter(Context con, ArrayList<Review> t) {
         context = con;
         reviews = t;
     }
@@ -31,7 +31,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewVi
         int id = R.layout.review_row;
 
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(id , parent ,false);
+        View view = inflater.inflate(id, parent, false);
         ReviewsAdapter.ReviewViewHolder viewHolder = new ReviewsAdapter.ReviewViewHolder(view);
 
         return viewHolder;
@@ -48,10 +48,11 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewVi
     }
 
 
-    public  class ReviewViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ReviewViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView reviewerName;
         TextView review_content;
+
         public ReviewViewHolder(View itemView) {
             super(itemView);
             reviewerName = (TextView) itemView.findViewById(R.id.reviwer_name);
@@ -62,6 +63,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewVi
             reviewerName.setText(reviews.get(listIndex).getAuthor());
             review_content.setText(reviews.get(listIndex).getReview_content());
         }
+
         @Override
         public void onClick(View v) {
 

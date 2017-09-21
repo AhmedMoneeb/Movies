@@ -17,11 +17,11 @@ import java.util.ArrayList;
 
 public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.TrailerViewHolder> {
 
-    ArrayList<Trailer>trailers ;
+    ArrayList<Trailer> trailers;
     Context context;
     private listItemClickListener listener;
 
-    public TrailersAdapter(Context con , ArrayList<Trailer>t , listItemClickListener l ) {
+    public TrailersAdapter(Context con, ArrayList<Trailer> t, listItemClickListener l) {
         context = con;
         trailers = t;
         listener = l;
@@ -33,7 +33,7 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
         int id = R.layout.trailer_row;
 
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(id , parent ,false);
+        View view = inflater.inflate(id, parent, false);
         TrailerViewHolder viewHolder = new TrailerViewHolder(view);
 
         return viewHolder;
@@ -50,9 +50,14 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
     }
 
 
-    public  class TrailerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public interface listItemClickListener {
+        void onListItemClick(int clickedItemIndex);
+    }
+
+    public class TrailerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView trailernumber;
+
         public TrailerViewHolder(View itemView) {
             super(itemView);
             trailernumber = (TextView) itemView.findViewById(R.id.traileridnumber);
@@ -60,17 +65,14 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
         }
 
         void bind(int listIndex) {
-            trailernumber.setText("Trailer "+(listIndex+1));
+            trailernumber.setText("Trailer " + (listIndex + 1));
         }
+
         @Override
         public void onClick(View v) {
             int clickedPosition = getAdapterPosition();
             listener.onListItemClick(clickedPosition);
         }
-    }
-
-    public interface listItemClickListener{
-      void onListItemClick(int clickedItemIndex);
     }
 
 }

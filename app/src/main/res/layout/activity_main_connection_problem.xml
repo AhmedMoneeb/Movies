@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/my_toolbar"
-        app:titleTextColor="@color/colorPrimaryLight"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:titleTextColor="@color/colorPrimaryLight" />
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -26,11 +28,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:textSize="25sp"
                 android:layout_centerVertical="true"
-                android:textAlignment="center"/>
+                android:textAlignment="center"
+                android:textSize="25sp" />
 
             <Button
+                android:id="@+id/ret"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/connectivity_problem_text_view"
@@ -38,9 +41,7 @@
                 android:layout_margin="16dp"
                 android:clickable="true"
                 android:onClick="reload"
-                android:text="@string/retry"
-                android:id="@+id/ret"
-                />
+                android:text="@string/retry" />
 
         </RelativeLayout>
     </FrameLayout>

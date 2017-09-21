@@ -22,8 +22,8 @@ public class Trailer {
     }
 
     public void setKey(String url) {
-        if (url.charAt(0)!='v' && url.charAt(1)!= '=')
-            url="v="+url;
+        if (url.charAt(0) != 'v' && url.charAt(1) != '=')
+            url = "v=" + url;
         this.key = url;
     }
 

@@ -13,4 +13,6 @@
 
     <string name="no_network">Can not load Data \n Check your Network Connectivity</string>
     <string name="retry">Retry</string>
+    <string name="overview">Overview</string>
+    <string name="empty_favourites">Favourites list is empty</string>
 </resources>

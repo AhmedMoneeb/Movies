@@ -43,8 +43,18 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ArrayList<Movie>>
-        ,PopupMenu.OnMenuItemClickListener  , MovieAdapter.ListItemClickListener{
+        , PopupMenu.OnMenuItemClickListener, MovieAdapter.ListItemClickListener {
 
+    public static final String BUNDLE_KEY = "com.solutionco.android.movies.OnaSaveInstanceState_BundleKey";
+    public static final String EXTRA_MOVIEID = "com.solutionco.android.movies.MovieID";
+    public static final String EXTRA_Title = "com.solutionco.android.movies.Title";
+    public static final String EXTRA_Overview = "com.solutionco.android.movies.Overview";
+    public static final String EXTRA_UserRate = "com.solutionco.android.movies.UserRate";
+    public static final String EXTRA_ReleaseDate = "com.solutionco.android.movies.ReleaseDate";
+    public static final String EXTRA_PosterPath = "com.solutionco.android.movies.PosterPath";
+    public static final String EXTRA_SORTMETHOD = "com.solutionco.android.movies.sortMethod";
+    public static final String EXTRA_BACKDROPPATH = "com.solutionco.android.movies.backdropPath";
+    private static final int LOADER_ID = 1026;
     RecyclerView recyclerView;
     MovieAdapter adapter;
     GridLayoutManager layoutManager;
@@ -52,31 +62,41 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     Toolbar myToolbar;
     String sort;
     TextView problemDescription;
-    public static final String BUNDLE_KEY= "com.solutionco.android.movies.OnaSaveInstanceState_BundleKey";
-
-    public static final String EXTRA_MOVIEID= "com.solutionco.android.movies.MovieID";
-    public static final String EXTRA_Title= "com.solutionco.android.movies.Title";
-    public static final String EXTRA_Overview= "com.solutionco.android.movies.Overview";
-    public static final String EXTRA_UserRate= "com.solutionco.android.movies.UserRate";
-    public static final String EXTRA_ReleaseDate= "com.solutionco.android.movies.ReleaseDate";
-    public static final String EXTRA_PosterPath= "com.solutionco.android.movies.PosterPath";
-    public static final String EXTRA_SORTMETHOD= "com.solutionco.android.movies.sortMethod";
-    public static final String EXTRA_BACKDROPPATH= "com.solutionco.android.movies.backdropPath";
-
     LoaderManager loaderManager = getSupportLoaderManager();
     ProgressDialog progress;
-    private static final int LOADER_ID = 1026;
+
+    public static ArrayList<Movie> convertCursorToArrayList(Cursor cursor) {
+        int pos = 0;
+        ArrayList<Movie> movies = new ArrayList<>();
+        while (cursor.moveToPosition(pos)) {
+            Movie movie = new Movie();
+            movie.setMovie_ID(cursor.getString(cursor.getColumnIndex(MovieDBContract.MovieEntry.COLUMN_MOVIE_ID)));
+            movie.setOriginalTitle(cursor.getString(cursor.getColumnIndex(MovieDBContract.MovieEntry.COLUMN_MOVIE_TITLE)));
+            movie.setReleaseDate(cursor.getString(cursor.getColumnIndex(MovieDBContract.MovieEntry.COLUMN_MOVIE_RELEASEDATE)));
+            movie.setVoteAverage(cursor.getString(cursor.getColumnIndex(MovieDBContract.MovieEntry.COLUMN_MOVIE_RATE)));
+            movie.setOverview(cursor.getString(cursor.getColumnIndex(MovieDBContract.MovieEntry.COLUMN_MOVIE_OVERVIEW)));
+
+
+            byte[] byteArray = cursor.getBlob(cursor.getColumnIndex(MovieDBContract.MovieEntry.COLUMN_MOVIE_POSTER));
+            Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+            movie.setPoster(bitmap);
+
+            movies.add(movie);
+            pos++;
+        }
+        return movies;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
 
-        if(savedInstanceState!=null){
-           sort = savedInstanceState.getString(BUNDLE_KEY);
-        }
-        else {
-            sort="popular";
+        if (savedInstanceState != null) {
+            sort = savedInstanceState.getString(BUNDLE_KEY);
+        } else {
+            sort = "popular";
         }
 
         progress = new ProgressDialog(this);
@@ -85,35 +105,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         progress.setCancelable(false);
         progress.show();
 
-        recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         movies = new ArrayList<>();
-    }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString(BUNDLE_KEY , sort);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        loaderManager.destroyLoader(LOADER_ID);
-
-
-        if(isConnectedToNetwork()){
-            loaderManager.initLoader(LOADER_ID, null , this);
-        }else{
+        if (isConnectedToNetwork()) {
+            loaderManager.initLoader(LOADER_ID, null, this);
+        } else {
             progress.dismiss();
             setContentView(R.layout.activity_main_connection_problem);
             myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
             setSupportActionBar(myToolbar);
-            problemDescription = (TextView)findViewById(R.id.connectivity_problem_text_view);
+            problemDescription = (TextView) findViewById(R.id.connectivity_problem_text_view);
             problemDescription.setText(R.string.no_network);
-            switch(sort){
+            switch (sort) {
                 case "popular":
                     myToolbar.setTitle("Popular Movies");
                     break;
@@ -126,11 +132,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         }
 
-        //if (sort.equals("favourites")){
-          //  loaderManager.destroyLoader(LOADER_ID);
-            //loaderManager.initLoader(LOADER_ID, null , this);
-            //new Fetch(this , "favourites" ).execute();
-        //}
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(BUNDLE_KEY, sort);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (sort.equals("favourites")) {
+            loaderManager.restartLoader(LOADER_ID, null, this);
+        }
     }
 
     public boolean isConnectedToNetwork() {
@@ -147,6 +163,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         return true;
 
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -162,55 +179,46 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         PopupMenu popup = new PopupMenu(this, v);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.pop_up_menu, popup.getMenu());
-        popup.setGravity(Gravity.RIGHT);
+        popup.setGravity(Gravity.END);
         popup.setOnMenuItemClickListener(this);
         popup.show();
     }
-
-
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.popular:
-                if(!sort.equals("popular")){
+                if (!sort.equals("popular")) {
                     progress = new ProgressDialog(this);
                     progress.setTitle("");
                     progress.setMessage("Getting Movies...");
                     progress.setCancelable(false);
                     progress.show();
 
-                    sort="popular";
-                    loaderManager.destroyLoader(LOADER_ID);
-                    loaderManager.initLoader(LOADER_ID, null , this);
+                    sort = "popular";
+                    loaderManager.restartLoader(LOADER_ID, null, this);
                     myToolbar.setTitle("Popular Movies");
-                    //new Fetch(this , sort).execute();
                 }
                 return true;
             case R.id.top_rated:
-                if(!sort.equals("topRated")){
+                if (!sort.equals("topRated")) {
                     progress = new ProgressDialog(this);
                     progress.setTitle("");
                     progress.setMessage("Getting Movies...");
                     progress.setCancelable(false);
                     progress.show();
-                    sort="topRated";
-                    loaderManager.destroyLoader(LOADER_ID);
-                    loaderManager.initLoader(LOADER_ID, null , this);
+                    sort = "topRated";
+                    loaderManager.restartLoader(LOADER_ID, null, this);
                     myToolbar.setTitle("Top Rated Movies");
-                    //new Fetch(this , sort).execute();
                 }
 
-                return  true;
+                return true;
             case R.id.favourites:
-                if(!sort.equals("favourites"))
-                {
-                    sort="favourites";
-                    loaderManager.destroyLoader(LOADER_ID);
-                    loaderManager.initLoader(LOADER_ID, null , this);
+                if (!sort.equals("favourites")) {
+                    sort = "favourites";
+                    loaderManager.restartLoader(LOADER_ID, null, this);
                     myToolbar.setTitle("Favourites");
-                    //new Fetch(this , sort).execute();
                 }
                 return true;
             default:
@@ -221,43 +229,22 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onListItemClicked(int clickedItemIndex) {
         Movie choosen = movies.get(clickedItemIndex);
-        Intent intent = new Intent(this , MovieDetails.class);
-        intent.putExtra(EXTRA_Title , choosen.getOriginalTitle());
-        intent.putExtra(EXTRA_Overview , choosen.getOverview());
-        intent.putExtra(EXTRA_ReleaseDate , choosen.getReleaseDate());
-        intent.putExtra(EXTRA_UserRate , choosen.getVoteAverage());
-        intent.putExtra(EXTRA_PosterPath , choosen.getPosterPath());
-        intent.putExtra(EXTRA_MOVIEID , choosen.getMovie_ID());
-        intent.putExtra(EXTRA_SORTMETHOD , sort);
-        intent.putExtra(EXTRA_BACKDROPPATH , choosen.getBackdrop_path());
+        Intent intent = new Intent(this, MovieDetails.class);
+        intent.putExtra(EXTRA_Title, choosen.getOriginalTitle());
+        intent.putExtra(EXTRA_Overview, choosen.getOverview());
+        intent.putExtra(EXTRA_ReleaseDate, choosen.getReleaseDate());
+        intent.putExtra(EXTRA_UserRate, choosen.getVoteAverage());
+        intent.putExtra(EXTRA_PosterPath, choosen.getPosterPath());
+        intent.putExtra(EXTRA_MOVIEID, choosen.getMovie_ID());
+        intent.putExtra(EXTRA_SORTMETHOD, sort);
+        intent.putExtra(EXTRA_BACKDROPPATH, choosen.getBackdrop_path());
         startActivity(intent);
-    }
-
-    public static ArrayList<Movie> convertCursorToArrayList(Cursor cursor){
-        int pos = 0;
-        ArrayList<Movie> movies = new ArrayList<>();
-        while (cursor.moveToPosition(pos)){
-            Movie movie = new Movie();
-            movie.setMovie_ID(cursor.getString(cursor.getColumnIndex(MovieDBContract.MovieEntry.COLUMN_MOVIE_ID)));
-            movie.setOriginalTitle(cursor.getString(cursor.getColumnIndex(MovieDBContract.MovieEntry.COLUMN_MOVIE_TITLE)));
-            movie.setReleaseDate(cursor.getString(cursor.getColumnIndex(MovieDBContract.MovieEntry.COLUMN_MOVIE_RELEASEDATE)));
-            movie.setVoteAverage(cursor.getString(cursor.getColumnIndex(MovieDBContract.MovieEntry.COLUMN_MOVIE_RATE)));
-            movie.setOverview(cursor.getString(cursor.getColumnIndex(MovieDBContract.MovieEntry.COLUMN_MOVIE_OVERVIEW)));
-
-
-            byte[] byteArray =cursor.getBlob(cursor.getColumnIndex(MovieDBContract.MovieEntry.COLUMN_MOVIE_POSTER));
-            Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0 ,byteArray.length);
-            movie.setPoster(bitmap);
-
-            movies.add(movie);
-            pos++;
-        }
-        return movies;
+        loaderManager.destroyLoader(LOADER_ID);
     }
 
     @Override
     public Loader<ArrayList<Movie>> onCreateLoader(int id, Bundle args) {
-        return new AsyncTaskLoader<  ArrayList<Movie>  >(this){
+        return new AsyncTaskLoader<ArrayList<Movie>>(this) {
             @Override
             protected void onStartLoading() {
                 super.onStartLoading();
@@ -268,16 +255,20 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             public ArrayList<Movie> loadInBackground() {
                 movies = new ArrayList<>();
                 try {
-                    if(sort.equals("popular")){
-                        movies = NetworkUtilities.getPopularMovies();
+                    switch (sort) {
+                        case "popular":
+                            movies = NetworkUtilities.getPopularMovies();
+                            break;
+                        case "topRated":
+                            movies = NetworkUtilities.getTopRatedMovies();
+                            break;
+                        case "favourites":
+                            Cursor cursor = getContentResolver().query(MovieDBContract.MovieEntry.CONTENT_URI,
+                                    null, null, null, null);
+                            movies = convertCursorToArrayList(cursor);
+                            break;
                     }
-                    else if(sort.equals("topRated")) {
-                        movies = NetworkUtilities.getTopRatedMovies();
-                    }else if(sort.equals("favourites")){
-                        Cursor cursor = getContentResolver().query(MovieDBContract.MovieEntry.CONTENT_URI ,
-                                null, null , null , null);
-                        movies = convertCursorToArrayList(cursor);
-                    }
+
                     return movies;
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -290,16 +281,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<ArrayList<Movie>> loader, ArrayList<Movie> data) {
-        if(sort.equals("favourites") && (movies == null || movies.size()== 0)){
+        if (sort.equals("favourites") && (movies == null || movies.size() == 0)) {
             setContentView(R.layout.activity_main_connection_problem);
-            problemDescription = (TextView)findViewById(R.id.connectivity_problem_text_view);
-            problemDescription.setText("Favourites list is empty");
+            problemDescription = (TextView) findViewById(R.id.connectivity_problem_text_view);
+            problemDescription.setText(getResources().getString(R.string.empty_favourites));
             myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
             setSupportActionBar(myToolbar);
             findViewById(R.id.ret).setVisibility(View.GONE);
             progress.dismiss();
 
-            switch(sort){
+            switch (sort) {
                 case "popular":
                     myToolbar.setTitle("Popular Movies");
                     break;
@@ -312,44 +303,45 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
             return;
         }
-        if( movies == null || movies.size()== 0){
+        if (movies == null || movies.size() == 0) {
             setContentView(R.layout.activity_main_connection_problem);
-            problemDescription = (TextView)findViewById(R.id.connectivity_problem_text_view);
+            problemDescription = (TextView) findViewById(R.id.connectivity_problem_text_view);
             problemDescription.setText(R.string.no_network);
             myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
             setSupportActionBar(myToolbar);
             progress.dismiss();
-        }else {
+        } else {
             setContentView(R.layout.activity_main);
-            recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
+            recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
             myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
             setSupportActionBar(myToolbar);
 
-            //movies = new ArrayList<>();
-            int numOfCols=0;
-            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+            switch (sort) {
+                case "popular":
+                    myToolbar.setTitle("Popular Movies");
+                    break;
+                case "topRated":
+                    myToolbar.setTitle("Top Rated Movies");
+                    break;
+                case "favourites":
+                    myToolbar.setTitle("Favourites");
+                    break;
+            }
+
+            int numOfCols;
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
                 numOfCols = 3;
             else
-                numOfCols=2;
-            layoutManager = new GridLayoutManager(this ,numOfCols);
+                numOfCols = 2;
+            layoutManager = new GridLayoutManager(this, numOfCols);
 
             recyclerView.setLayoutManager(layoutManager);
-            adapter = new MovieAdapter(movies,this , (MainActivity)this , sort );
-            adapter.notifyDataSetChanged();
+            adapter = new MovieAdapter(movies, this, this, sort);
+            //adapter.notifyDataSetChanged();
             recyclerView.setAdapter(adapter);
             progress.dismiss();
         }
-        switch(sort){
-            case "popular":
-                myToolbar.setTitle("Popular Movies");
-                break;
-            case "topRated":
-                myToolbar.setTitle("Top Rated Movies");
-                break;
-            case "favourites":
-                myToolbar.setTitle("Favourites");
-                break;
-        }
+
     }
 
     @Override
@@ -358,8 +350,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
 
-
-    public void reload(View v){
+    public void reload(View v) {
         recreate();
     }
 }

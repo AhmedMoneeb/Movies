@@ -21,7 +21,7 @@ final public class NetworkUtilities {
 
     private static final String API_KEY = "Put your API_key here";
     private static String topRatedURL = "http://api.themoviedb.org/3/movie/top_rated?api_key=" + API_KEY;
-    private static String popularURL = "http://api.themoviedb.org/3/movie/popular?api_key="+API_KEY;
+    private static String popularURL = "http://api.themoviedb.org/3/movie/popular?api_key=" + API_KEY;
 
     private static String trailerURL = "http://api.themoviedb.org/3/movie/";
 
@@ -30,13 +30,14 @@ final public class NetworkUtilities {
 
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
-        .url(popularURL)
-        .build();
+                .url(popularURL)
+                .build();
 
         Response response = client.newCall(request).execute();
         return pasrseJSON(response.body().string());
 
     }
+
     public static ArrayList<Movie> getTopRatedMovies() throws IOException {
 
         OkHttpClient client = new OkHttpClient();
@@ -49,7 +50,7 @@ final public class NetworkUtilities {
 
     }
 
-    public static ArrayList<Movie>pasrseJSON (String response){
+    public static ArrayList<Movie> pasrseJSON(String response) {
         ArrayList<Movie> res = new ArrayList<>();
 
         try {
@@ -62,13 +63,13 @@ final public class NetworkUtilities {
                 movie.setOriginalTitle(jsonobject.getString("original_title"));
                 movie.setOverview(jsonobject.getString("overview"));
                 movie.setReleaseDate(jsonobject.getString("release_date"));
-                movie.setPosterPath("http://image.tmdb.org/t/p/"+"w342"+jsonobject.getString("poster_path"));
+                movie.setPosterPath("http://image.tmdb.org/t/p/" + "w342" + jsonobject.getString("poster_path"));
                 movie.setVoteAverage(jsonobject.getString("vote_average"));
                 movie.setMovie_ID(jsonobject.getString("id"));
-                movie.setBackdrop_path("http://image.tmdb.org/t/p/"+"w342"+jsonobject.getString("backdrop_path"));
+                movie.setBackdrop_path("http://image.tmdb.org/t/p/" + "w342" + jsonobject.getString("backdrop_path"));
                 res.add(movie);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
 
@@ -79,7 +80,7 @@ final public class NetworkUtilities {
 
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
-                .url(trailerURL+movieID+"/videos?api_key="+API_KEY)
+                .url(trailerURL + movieID + "/videos?api_key=" + API_KEY)
                 .build();
 
         Response response = client.newCall(request).execute();
@@ -87,7 +88,7 @@ final public class NetworkUtilities {
     }
 
 
-    public static ArrayList<Trailer> pasrseTrailersJSON (String response){
+    public static ArrayList<Trailer> pasrseTrailersJSON(String response) {
         ArrayList<Trailer> res = new ArrayList<>();
 
         try {
@@ -102,7 +103,7 @@ final public class NetworkUtilities {
                 trailer.setKey(jsonobject.getString("key"));
                 res.add(trailer);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
 
@@ -114,14 +115,14 @@ final public class NetworkUtilities {
 
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
-                .url(trailerURL+movieID+"/reviews?api_key=" + API_KEY)
+                .url(trailerURL + movieID + "/reviews?api_key=" + API_KEY)
                 .build();
 
         Response response = client.newCall(request).execute();
         return pasrseReviewsJSON(response.body().string());
     }
 
-    public static ArrayList<Review> pasrseReviewsJSON (String response){
+    public static ArrayList<Review> pasrseReviewsJSON(String response) {
         ArrayList<Review> res = new ArrayList<>();
 
         try {
@@ -136,7 +137,7 @@ final public class NetworkUtilities {
                 review.setReview_ID(jsonobject.getString("id"));
                 res.add(review);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
 

@@ -11,19 +11,20 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DbHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "movies.db";
     public static final int DATABASE_VERSION = 1;
-    public DbHelper(Context context ){
-        super(context  , DATABASE_NAME , null , DATABASE_VERSION);
+
+    public DbHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String stmt = "CREATE TABLE " + MovieDBContract.MovieEntry.TABLE_NAME + "( "+ MovieDBContract.MovieEntry.COLUMN_MOVIE_ID
-                +" TEXT NOT NULL PRIMARY KEY " +"," + MovieDBContract.MovieEntry.COLUMN_MOVIE_TITLE
-                +" TEXT NOT NULL , " + MovieDBContract.MovieEntry.COLUMN_MOVIE_RELEASEDATE +
+        String stmt = "CREATE TABLE " + MovieDBContract.MovieEntry.TABLE_NAME + "( " + MovieDBContract.MovieEntry.COLUMN_MOVIE_ID
+                + " TEXT NOT NULL PRIMARY KEY " + "," + MovieDBContract.MovieEntry.COLUMN_MOVIE_TITLE
+                + " TEXT NOT NULL , " + MovieDBContract.MovieEntry.COLUMN_MOVIE_RELEASEDATE +
                 " TEXT NOT NULL , " + MovieDBContract.MovieEntry.COLUMN_MOVIE_RATE +
                 " TEXT NOT NULL , " + MovieDBContract.MovieEntry.COLUMN_MOVIE_OVERVIEW +
                 " TEXT NOT NULL , " + MovieDBContract.MovieEntry.COLUMN_MOVIE_POSTER +
-                " BLOB , " + MovieDBContract.MovieEntry.COLUMN_MOVIE_POSTER_BACK+" BLOB "
+                " BLOB , " + MovieDBContract.MovieEntry.COLUMN_MOVIE_POSTER_BACK + " BLOB "
                 + " );";
         db.execSQL(stmt);
     }

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
 import com.solutionco.android.movies.Data.Movie;
 import com.squareup.picasso.Picasso;
 
@@ -15,16 +16,16 @@ import java.util.ArrayList;
  * Created by Ahmed on 2/28/2017.
  */
 
-public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ImageViewHolder>{
+public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ImageViewHolder> {
 
 
+    private final ListItemClickListener clickListener;
     //ArrayList<String>paths ;
     String typeOfSort;
     Context context;
-    ArrayList<Movie>movies;
-    private final ListItemClickListener clickListener;
+    ArrayList<Movie> movies;
 
-    public MovieAdapter(ArrayList<Movie>movies , Context con , ListItemClickListener l , String s) {
+    public MovieAdapter(ArrayList<Movie> movies, Context con, ListItemClickListener l, String s) {
         clickListener = l;
         context = con;
         typeOfSort = s;
@@ -42,7 +43,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ImageViewHol
         Context context = parent.getContext();
         int id = R.layout.movie;
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(id , parent ,false);
+        View view = inflater.inflate(id, parent, false);
 
         ImageViewHolder viewHolder = new ImageViewHolder(view);
         return viewHolder;
@@ -59,16 +60,21 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ImageViewHol
     }
 
 
+    public interface ListItemClickListener {
+        public void onListItemClicked(int clickedItemIndex);
+    }
 
-    public  class ImageViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ImageViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView moviePoster;
+
         public ImageViewHolder(View itemView) {
             super(itemView);
             moviePoster = (ImageView) itemView.findViewById(R.id.movie_poster);
             itemView.setOnClickListener(this);
         }
+
         void bind(int listIndex) {
-            if(typeOfSort.equals("favourites")){
+            if (typeOfSort.equals("favourites")) {
                 moviePoster.setImageBitmap(movies.get(listIndex).getPoster());
                 return;
             }
@@ -82,9 +88,5 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ImageViewHol
             int x = getAdapterPosition();
             clickListener.onListItemClicked(x);
         }
-    }
-
-    public  interface ListItemClickListener{
-        public void onListItemClicked(int clickedItemIndex);
     }
 }
